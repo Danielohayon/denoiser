@@ -114,6 +114,8 @@ def _main(args):
     print("----------------------" + str(args.epochs))
     args.__dict__["epochs"] = 11
     print("----------------------" + str(args.epochs))
+    print(wandb.config)
+    print(type(wandb.config))
     raise Exception("tttttttttttttttttt")
 
     if args.ddp and args.rank is None:
