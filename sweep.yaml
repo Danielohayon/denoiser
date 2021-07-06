@@ -1,0 +1,9 @@
+program: train.py
+method: bayes
+metric:
+  name: valid
+  goal: minimize
+parameters:
+  demucs.max_hidden:
+    min: 100
+    max: 10000

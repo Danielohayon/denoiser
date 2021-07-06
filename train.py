@@ -105,6 +105,8 @@ def _main(args):
     logger.debug(args)
     wandb.init(project='denoiser', entity='danielo', config=args)
 
+    # For Sweep
+    args = wandb.config
 
     if args.ddp and args.rank is None:
         start_ddp_workers()
