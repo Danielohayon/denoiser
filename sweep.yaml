@@ -1,4 +1,4 @@
-program: train.py ddp=1 epochs=30
+program: train.py
 method: bayes
 metric:
   name: valid
@@ -7,3 +7,11 @@ parameters:
   demucs.max_hidden:
     min: 100
     max: 10000
+  epochs:
+    min: 20
+    max: 30
+command:
+  - ${env}
+  - python3
+  - ${program}
+  - ${args}
