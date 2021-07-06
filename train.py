@@ -99,26 +99,26 @@ def _main(args):
         if isinstance(value, str) and key not in ["matching"]:
             args.dset[key] = hydra.utils.to_absolute_path(value)
     __file__ = hydra.utils.to_absolute_path(__file__)
-    if args.verbose:
-        logger.setLevel(logging.DEBUG)
-        logging.getLogger("denoise").setLevel(logging.DEBUG)
+    wandb.init(project='denoiser', entity='danielo', config=args)
+    # if args.verbose:
+    logger.setLevel(logging.DEBUG)
+    logging.getLogger("denoise").setLevel(logging.DEBUG)
 
     logger.info("For logs, checkpoints and samples check %s", os.getcwd())
     logger.debug(args)
-    wandb.init(project='denoiser', entity='danielo', config=args)
 
     # For Sweep
-    print(args.__dict__)
-    print(type(args))
-    print("----------------------" + str(args.epochs))
-    args.__dict__["epochs"] = 11
-    print("----------------------" + str(args.epochs))
-    print(wandb.config)
-    print(type(wandb.config))
-
-    args = wandb.config
-
-    raise Exception("tttttttttttttttttt")
+    # print(args.__dict__)
+    # print(type(args))
+    # print("----------------------" + str(args.epochs))
+    # args.__dict__["epochs"] = 11
+    # print("----------------------" + str(args.epochs))
+    # print(wandb.config)
+    # print(type(wandb.config))
+    #
+    # args = wandb.config
+    #
+    # raise Exception("tttttttttttttttttt")
 
     if args.ddp and args.rank is None:
         start_ddp_workers()
