@@ -11,7 +11,7 @@ parameters:
     min: 20
     max: 30
 command:
-  - ${env}
+  - /usr/bin/python3
   - python3
   - ${program}
   - ${args}
