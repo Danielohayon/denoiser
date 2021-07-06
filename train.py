@@ -108,7 +108,6 @@ def _main(args):
     wandb.init(project='denoiser', entity='danielo', config=args)
 
     # For Sweep
-    args = wandb.config
     print(args.__dict__)
     print(type(args))
     print("----------------------" + str(args.epochs))
@@ -116,6 +115,9 @@ def _main(args):
     print("----------------------" + str(args.epochs))
     print(wandb.config)
     print(type(wandb.config))
+
+    args = wandb.config
+
     raise Exception("tttttttttttttttttt")
 
     if args.ddp and args.rank is None:
