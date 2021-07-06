@@ -109,6 +109,12 @@ def _main(args):
 
     # For Sweep
     args = wandb.config
+    print(args.__dict__)
+    print(type(args))
+    print("----------------------" + str(args.epochs))
+    args.__dict__["epochs"] = 11
+    print("----------------------" + str(args.epochs))
+    raise Exception("tttttttttttttttttt")
 
     if args.ddp and args.rank is None:
         start_ddp_workers()
