@@ -1,4 +1,4 @@
-program: train.py
+program: train.py ddp=1 epochs=30
 method: bayes
 metric:
   name: valid
