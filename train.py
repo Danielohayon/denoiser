@@ -11,6 +11,18 @@ import os
 
 import hydra
 
+import wandb
+
+# 1. Start a new run
+wandb.init(project='denoiser', entity='danielo')
+
+# 2. Save model inputs and hyperparameters
+config = wandb.config
+# config.learning_rate = 0.01
+
+
+
+
 from denoiser.executor import start_ddp_workers
 
 logger = logging.getLogger(__name__)
@@ -92,6 +104,8 @@ def _main(args):
 
     logger.info("For logs, checkpoints and samples check %s", os.getcwd())
     logger.debug(args)
+    for param in args:
+        config.__dict__[param] = args[param]
     if args.ddp and args.rank is None:
         start_ddp_workers()
     else:
