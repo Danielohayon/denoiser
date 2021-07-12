@@ -11,4 +11,4 @@ if [[ ! -e $path ]]; then
     mkdir -p $path
 fi
 python3 -m denoiser.audio $1 > $path/noisy.json
-python3 -m denoiser.audio $1 > $path/clean.json
+python3 -m denoiser.audio $2 > $path/clean.json
