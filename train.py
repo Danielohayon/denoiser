@@ -9,9 +9,7 @@ import sys
 sys.argv = [i.replace('--', '') for i in sys.argv]
 import logging
 import os
-
 import hydra
-
 import wandb
 
 # 1. Start a new run
@@ -42,10 +40,16 @@ def run(args):
     if args.show:
         logger.info(model)
         mb = sum(p.numel() for p in model.parameters()) * 4 / 2**20
+        num_params = sum(p.numel() for p in model.parameters()) / 1000000
         logger.info('Size: %.1f MB', mb)
+        logger.info(f'num params {num_params}')
         if hasattr(model, 'valid_length'):
             field = model.valid_length(1)
             logger.info('Field: %.1f ms', field / args.sample_rate * 1000)
+        enc_params = sum([i.numel() for i in model.encoder.parameters()])/1000000
+        dec_params = sum([i.numel() for i in model.decoder.parameters()]) / 1000000
+        lstm_params = sum([i.numel() for i in model.lstm.parameters()]) / 1000000
+        logger.info(f'enc {enc_params}, dec {dec_params}, lstm {lstm_params} in mil')
         return
 
     assert args.batch_size % distrib.world_size == 0
@@ -99,7 +103,9 @@ def _main(args):
         if isinstance(value, str) and key not in ["matching"]:
             args.dset[key] = hydra.utils.to_absolute_path(value)
     __file__ = hydra.utils.to_absolute_path(__file__)
-    wandb.init(project='denoiser', entity='danielo', config=args)
+
+    if args.wandb:
+        wandb.init(project='denoiser', entity='danielo', config=args)
     # if args.verbose:
     logger.setLevel(logging.DEBUG)
     logging.getLogger("denoise").setLevel(logging.DEBUG)

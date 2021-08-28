@@ -129,7 +129,8 @@ class Solver(object):
             info = " ".join(f"{k.capitalize()}={v:.5f}" for k, v in metrics.items())
             logger.info(f"Epoch {epoch + 1}: {info}")
 
-        wandb.watch(self.model)
+        if self.args.wandb:
+            wandb.watch(self.model)
 
         for epoch in range(len(self.history), self.epochs):
             # Train one epoch
@@ -183,7 +184,8 @@ class Solver(object):
             logger.info('-' * 70)
             logger.info(bold(f"Overall Summary | Epoch {epoch + 1} | {info}"))
 
-            wandb.log(metrics)
+            if self.args.wandb:
+                wandb.log(metrics)
 
             if distrib.rank == 0:
                 json.dump(self.history, open(self.history_file, "w"), indent=2)
