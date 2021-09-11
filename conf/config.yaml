@@ -63,6 +63,7 @@ batch_size: 64
 # Models
 model: demucs # either demucs or dwave
 demucs:
+  use_lstm: true
   chin: 1
   chout: 1
   hidden: 48
