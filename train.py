@@ -48,7 +48,10 @@ def run(args):
             logger.info('Field: %.1f ms', field / args.sample_rate * 1000)
         enc_params = sum([i.numel() for i in model.encoder.parameters()])/1000000
         dec_params = sum([i.numel() for i in model.decoder.parameters()]) / 1000000
-        lstm_params = sum([i.numel() for i in model.lstm.parameters()]) / 1000000
+        if args.demucs.use_lstm:
+            lstm_params = sum([i.numel() for i in model.lstm.parameters()]) / 1000000
+        else:
+            lstm_params = 0
         logger.info(f'enc {enc_params}, dec {dec_params}, lstm {lstm_params} in mil')
         return
 
