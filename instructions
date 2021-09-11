@@ -1,0 +1,9 @@
+
+
+Running a single run
+call ./make_debug with the noisy_folder_path and then the clean_folder_path
+run: ./train.py (add different hyper parameters)
+
+
+#for cpu runs run
+./train.py wandb=True demucs.depth=3 device=cpu batch_size=1 verbose=1

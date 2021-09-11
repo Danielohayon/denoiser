@@ -84,7 +84,8 @@ class Demucs(nn.Module):
                  normalize=True,
                  glu=True,
                  rescale=0.1,
-                 floor=1e-3):
+                 floor=1e-3,
+                 use_lstm=True):
 
         super().__init__()
         if resample not in [1, 2, 4]:
@@ -100,6 +101,8 @@ class Demucs(nn.Module):
         self.floor = floor
         self.resample = resample
         self.normalize = normalize
+        self.use_lstm = use_lstm
+        print(f"use lstm = {self.use_lstm}")
 
         self.encoder = nn.ModuleList()
         self.decoder = nn.ModuleList()
@@ -126,8 +129,8 @@ class Demucs(nn.Module):
             chout = hidden
             chin = hidden
             hidden = min(int(growth * hidden), max_hidden)
-
-        self.lstm = BLSTM(chin, bi=not causal)
+        if self.use_lstm:
+            self.lstm = BLSTM(chin, bi=not causal)
         if rescale:
             rescale_module(self, reference=rescale)
 
@@ -176,7 +179,8 @@ class Demucs(nn.Module):
             x = encode(x)
             skips.append(x)
         x = x.permute(2, 0, 1)
-        x, _ = self.lstm(x)
+        if self.use_lstm:
+            x, _ = self.lstm(x)
         x = x.permute(1, 2, 0)
         for decode in self.decoder:
             skip = skips.pop(-1)
@@ -237,7 +241,8 @@ class DemucsStreamer:
                  resample_buffer=256):
         device = next(iter(demucs.parameters())).device
         self.demucs = demucs
-        self.lstm_state = None
+        if demucs.use_lstm:
+            self.lstm_state = None
         self.conv_state = None
         self.dry = dry
         self.resample_lookahead = resample_lookahead
@@ -376,7 +381,8 @@ class DemucsStreamer:
             skips.append(x)
 
         x = x.permute(2, 0, 1)
-        x, self.lstm_state = demucs.lstm(x, self.lstm_state)
+        if demucs.use_lstm:
+            x, self.lstm_state = demucs.lstm(x, self.lstm_state)
         x = x.permute(1, 2, 0)
         # In the following, x contains only correct samples, i.e. the one
         # for which each time position is covered by two window of the upper layer.
@@ -429,7 +435,7 @@ def test():
         th.set_num_threads(args.num_threads)
     sr = args.sample_rate
     sr_ms = sr / 1000
-    demucs = Demucs(depth=args.depth, hidden=args.hidden, resample=args.resample).to(args.device)
+    demucs = Demucs(depth=args.depth, hidden=args.hidden, resample=args.resample, use_lstm=args.use_lstm).to(args.device)
     x = th.randn(1, int(sr * 4)).to(args.device)
     out = demucs(x[None])[0]
     streamer = DemucsStreamer(demucs, num_frames=args.num_frames)
