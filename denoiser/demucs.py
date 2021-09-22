@@ -437,7 +437,7 @@ def test():
         th.set_num_threads(args.num_threads)
     sr = args.sample_rate
     sr_ms = sr / 1000
-    demucs = Demucs(depth=args.depth, hidden=args.hidden, resample=args.resample, use_lstm=args.use_lstm).to(args.device)
+    demucs = Demucs(depth=args.depth, hidden=args.hidden, resample=args.resample, use_lstm=args.use_lstm, lstm_layers=args.lstm_layers).to(args.device)
     x = th.randn(1, int(sr * 4)).to(args.device)
     out = demucs(x[None])[0]
     streamer = DemucsStreamer(demucs, num_frames=args.num_frames)
