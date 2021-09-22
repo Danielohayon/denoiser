@@ -65,6 +65,7 @@ model: demucs # either demucs or dwave
 demucs:
   use_lstm: true
   lstm_layers: 2
+  lstm_hidden_size: -1
   chin: 1
   chout: 1
   hidden: 48

@@ -17,10 +17,12 @@ from .utils import capture_init
 
 
 class BLSTM(nn.Module):
-    def __init__(self, dim, layers=2, bi=True):
+    def __init__(self, dim, layers=2, bi=True, hidden_size=-1):
         super().__init__()
         klass = nn.LSTM
-        self.lstm = klass(bidirectional=bi, num_layers=layers, hidden_size=dim, input_size=dim)
+        if hidden_size == -1:
+            hidden_size = dim
+        self.lstm = klass(bidirectional=bi, num_layers=layers, hidden_size=hidden_size, input_size=dim)
         self.linear = None
         if bi:
             self.linear = nn.Linear(2 * dim, dim)
@@ -86,7 +88,8 @@ class Demucs(nn.Module):
                  rescale=0.1,
                  floor=1e-3,
                  use_lstm=True,
-                 lstm_layers=2):
+                 lstm_layers=2,
+                 lstm_hidden_size=-1):
 
         super().__init__()
         if resample not in [1, 2, 4]:
@@ -104,6 +107,7 @@ class Demucs(nn.Module):
         self.normalize = normalize
         self.use_lstm = use_lstm
         self.lstm_layers = lstm_layers
+        self.lstm_hidden_size = lstm_hidden_size
         print(f"use lstm = {self.use_lstm}")
 
         self.encoder = nn.ModuleList()
@@ -132,7 +136,7 @@ class Demucs(nn.Module):
             chin = hidden
             hidden = min(int(growth * hidden), max_hidden)
         if self.use_lstm:
-            self.lstm = BLSTM(chin, layers=self.lstm_layers, bi=not causal)
+            self.lstm = BLSTM(chin, layers=self.lstm_layers, bi=not causal, hidden_size=self.lstm_hidden_size)
         if rescale:
             rescale_module(self, reference=rescale)
 
