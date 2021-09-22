@@ -85,7 +85,8 @@ class Demucs(nn.Module):
                  glu=True,
                  rescale=0.1,
                  floor=1e-3,
-                 use_lstm=True):
+                 use_lstm=True,
+                 lstm_layers=2):
 
         super().__init__()
         if resample not in [1, 2, 4]:
@@ -102,6 +103,7 @@ class Demucs(nn.Module):
         self.resample = resample
         self.normalize = normalize
         self.use_lstm = use_lstm
+        self.lstm_layers = lstm_layers
         print(f"use lstm = {self.use_lstm}")
 
         self.encoder = nn.ModuleList()
@@ -117,7 +119,7 @@ class Demucs(nn.Module):
                 nn.Conv1d(hidden, hidden * ch_scale, 1), activation,
             ]
             self.encoder.append(nn.Sequential(*encode))
-
+            # 
             decode = []
             decode += [
                 nn.Conv1d(hidden, ch_scale * hidden, 1), activation,
@@ -130,7 +132,7 @@ class Demucs(nn.Module):
             chin = hidden
             hidden = min(int(growth * hidden), max_hidden)
         if self.use_lstm:
-            self.lstm = BLSTM(chin, bi=not causal)
+            self.lstm = BLSTM(chin, layers=self.lstm_layers, bi=not causal)
         if rescale:
             rescale_module(self, reference=rescale)
 
