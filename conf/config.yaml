@@ -8,15 +8,15 @@ data_dir: /home/ubuntu/daniel/denoiser/egs/debug/tr
 
 # Dataset related
 sample_rate: 16000
-segment: 4
-stride: 1    # in seconds, how much to stride between training examples
+segment: 4.5
+stride: 0.5    # in seconds, how much to stride between training examples
 pad: true   # if training sample is too short, pad it
 
 # Dataset Augmentation
 remix: false   # remix noise and clean
 bandmask: 0.   # drop at most this fraction of freqs in mel scale
 shift: 0    # random shift, number of samples
-shift_same: false   # shift noise and clean by the same amount
+shift_same: true   # shift noise and clean by the same amount
 revecho: 0  # add reverb like augment
 
 # Logging and printing, and does not impact training
